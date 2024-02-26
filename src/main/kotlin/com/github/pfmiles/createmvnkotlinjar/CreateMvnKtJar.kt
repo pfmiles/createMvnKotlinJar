@@ -208,9 +208,17 @@ class CreateMvnKtJar {
                     -DinteractiveMode=false
             """.trimIndent().replace('\n', ' ').trim()
             Runtime.getRuntime().exec(cmd).let {
+                val printStdOut = Thread({
+                    it.inputStream.bufferedReader(Charsets.UTF_8).use { it.forEachLine(::println) }
+                }, "mvn-cmd-stdout-printer")
+                printStdOut.start()
+                val printStdErr = Thread({
+                    it.errorStream.bufferedReader(Charsets.UTF_8).use { it.forEachLine(::println) }
+                }, "mvn-cmd-stderr-printer")
+                printStdErr.start()
                 try {
                     check(it.waitFor() == 0) {
-                        "Create maven kotlin jar project error, stdout: ${it.inputStream.readBytes().toString(Charsets.UTF_8)}, stderr: ${it.errorStream.readBytes().toString(Charsets.UTF_8)}"
+                        "Create maven kotlin jar project error, please refer to the output message for more info."
                     }
                 } finally {
                     IOUtils.closeQuietly(it.getInputStream())
