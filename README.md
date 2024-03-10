@@ -3,13 +3,15 @@
 * Java 1.8 or later runtime required
 * Java source code is also allowed
 * usage:
-    1. `java -jar createMvnKotlinJar-1.0.0-shaded.jar groupId artifactId kotlinVersion(optional) javaVersion(optional)
+    1. `java (-Dtype=springboot) -jar createMvnKotlinJar-1.0.0-shaded.jar groupId artifactId kotlinVersion(optional) javaVersion(optional)
        mainClsName(optional, full-qualified-class-name)`
     2. `cd ${artifactId}`
     3. `mvn clean install`
-    4. `java -jar target/${artifactId}-1.0-SNAPSHOT-shaded.jar`, then you can see 'Hello, World' out there.
-* It does not only include the functionality of the `mvn archetype:generate` command, but also pre-configures all the necessary additional settings for you within the pom.xml file.
-* It generates project with a pom.xml like this: 
+    4. `java -jar target/${artifactId}-1.0-SNAPSHOT(-shaded).jar`, then you can see 'Hello, World' out there.
+* It does not only include the functionality of the `mvn archetype:generate` command, but also pre-configures all the
+  necessary additional settings for you within the pom.xml file.
+* It generates project with a pom.xml like this:
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -176,3 +178,6 @@
 
 </project>
 ```
+
+* \[Since v1.1.0]When you run the command with `-Dtype=springboot` option, the output will be a spring-boot standalone
+  jar project.
