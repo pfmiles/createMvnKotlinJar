@@ -8,9 +8,11 @@ object ShadedJarProjImpl {
 
         println("Creating maven kotlin jar project with parameters: groupId: $groupId, artifactId: $artifactId, koitlinVersion: $kotlinVersion, javaVersion: $javaVersion, mainClsName: $mainClsName")
 
-        createProjSkeletonUsingMvn(groupId, artifactId, kotlinVersion)
+        val outDir: String = System.getProperty("outputDirectory", ".")
 
-        File("./${artifactId}/pom.xml").bufferedWriter(Charsets.UTF_8).use {
+        createProjSkeletonUsingMvn(groupId, artifactId, kotlinVersion, outDir)
+
+        File("$outDir/${artifactId}/pom.xml").bufferedWriter(Charsets.UTF_8).use {
             it.write(
                 """
                     <?xml version="1.0" encoding="UTF-8"?>
@@ -190,7 +192,8 @@ object ShadedJarProjImpl {
     }
 
     // create mvn proj in current dir
-    private fun createProjSkeletonUsingMvn(groupId: String, artifactId: String, kotlinVersion: String) {
+    private fun createProjSkeletonUsingMvn(groupId: String, artifactId: String, kotlinVersion: String, outputDir: String) {
+        val outDir: String = outputDir.takeIf { "." != it }?.let { "-DoutputDirectory=$outputDir" } ?: ""
         val cmd = """
                 mvn -X archetype:generate -DarchetypeGroupId=org.jetbrains.kotlin
                     -DarchetypeArtifactId=kotlin-archetype-jvm
@@ -199,6 +202,7 @@ object ShadedJarProjImpl {
                     -DartifactId=${artifactId}
                     -Dversion=1.0-SNAPSHOT
                     -DinteractiveMode=false
+                    $outDir
             """.trimIndent().replace('\n', ' ').trim()
         Runtime.getRuntime().exec(cmd).let {
             val printStdOut = Thread({
